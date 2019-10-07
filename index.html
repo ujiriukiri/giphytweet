@@ -11,15 +11,17 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
         body{
-    		padding-top: 5rem;
-    	}
-    	.result-block{
-    		max-height: 500px;
-    	}
-    	#result{
-    		max-height: calc(500px - 3rem);
-    	}
-    	.footer {
+            padding-top: 5rem;
+        }
+
+        .result-block{
+            max-height: 500px;
+        }
+
+        #result{
+            max-height: calc(500px - 3rem);
+        }
+        .footer {
           background-color: #f5f5f5;
         }
     </style>
@@ -35,7 +37,7 @@
                 <div class="input-group mb-3">
                     <input type="text" id="search-query" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" value="">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button">Search</button>
+                        <button onclick="search_gif()" class="btn btn-outline-secondary" type="button" id="search-button">Search</button>
                     </div>
                 </div>
             </form>
@@ -45,18 +47,45 @@
                 <img id="result" src="img/ph.png" alt="placeholder" class="img-fluid">
             </div>
             <div class="flex-grow-1 p-3 align-self-center">
-                <button type="button" class="btn btn-primary">Tweet</button>
+                <button type="button" id="tweet-button" class="btn btn-primary">Tweet</button>
             </div>
         </div>
     </div>
     <footer class="footer mt-auto py-3">
-		<div class="container">
-			<span class="d-block text-center text-muted">Powered by <a href="https://giphy.com" target="blank">Giphy</a></span>
-		</div>
-	</footer>
+        <div class="container">
+            <span class="d-block text-center text-muted">Powered by <a href="https://giphy.com" target="blank">Giphy</a></span>
+        </div>
+    </footer>
 
     <script>
-    	
+        var search_btn = document.getElementById('search-button');
+        var tweet_btn = document.getElementById('tweet-button');
+        var giphy_key = "y1CIZBUNKEbfxJWKZwQg6QOmINaUHt59";
+
+        function search_gif(){
+            var query = document.getElementById('search-query').value;
+            var url = "https://api.giphy.com/v1/gifs/search?api_key="+ giphy_key +"&q="+ query +"&limit=25&offset=0&rating=G&lang=en";
+
+            // Create XMLHttpRequest object
+            var hr = new XMLHttpRequest();
+            hr.open("GET", url, true);
+            hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            hr.onreadystatechange = function() {
+                if(hr.readyState == 4 && hr.status == 200) {
+                    var return_data = JSON.parse(hr.responseText);
+                    process_result(return_data);
+                }
+            }
+
+            hr.send();
+        }
+
+        function process_result(result){
+            rand = Math.floor(Math.random() * (result.data.length));
+            var gif = result.data[rand].images.downsized_large.url;
+            document.getElementById('result').src = gif;
+        }
+        
     </script>
 </body>
 
